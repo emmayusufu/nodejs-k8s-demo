@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: nodejs-app
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: staging
+            namespace: staging
+            valueFile: values-staging.yaml
+          - name: production
+            namespace: production
+            valueFile: values-production.yaml
+  template:
+    metadata:
+      name: "nodejs-app-{{name}}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/yourusername/nodejs-k8s-demo.git
+        targetRevision: HEAD
+        path: nodejs-k8s-chart
+        helm:
+          valueFiles:
+            - "{{valueFile}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{namespace}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
