@@ -72,7 +72,7 @@ jobs:
       - name: Update Helm values
         run: |
           # Update the image.tag value in values.yaml
-          VERSION="${{ steps.sha.outputs.short_sha }}"
+          VERSION="sha-${{ steps.sha.outputs.short_sha }}"
           IMAGE_REPO="ghcr.io/${{ github.repository_owner }}/nodejs-k8s-demo"
 
           yq e -i '.image.repository = "'"$IMAGE_REPO"'"' ./nodejs-k8s-chart/values.yaml
